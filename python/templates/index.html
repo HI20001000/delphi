@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TMS Web Core Shoelace (Python Port)</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/shoelace.js"
+    ></script>
+    <style>
+      :root {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(180deg, #f6f7fb 0%, #eef2ff 100%);
+        color: #1f2937;
+        min-height: 100vh;
+      }
+
+      body {
+        margin: 0;
+        padding: 20px;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        margin-bottom: 8px;
+      }
+
+      h2 {
+        margin-top: 48px;
+        margin-bottom: 12px;
+      }
+
+      .panel {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 12px 24px rgba(31, 41, 55, 0.08);
+        border: 1px solid #e5e7eb;
+      }
+
+      .controls-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: 150px 1fr;
+        align-items: center;
+      }
+
+      .control-label {
+        text-align: right;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .fancyslider::part(base) {
+        border: 2px solid royalblue;
+        border-radius: 12px;
+        background-color: #f0f0ff80;
+      }
+      .fancyslider::part(grid) {
+        border-top-left-radius: 11px;
+        border-top-right-radius: 11px;
+      }
+      .fancyslider::part(hue-slider) {
+        margin-left: 20px;
+        margin-right: 40px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+      }
+      .fancyslider::part(opacity-slider) {
+        margin-left: 20px;
+        margin-right: 40px;
+        margin-top: 20px;
+        border-radius: 10px;
+      }
+      .fancyslider::part(slider-handle) {
+        box-shadow: rgb(0 0 0 / 25%) 0px 0px 0px 4px;
+      }
+      .fancyslider::part(preview) {
+        border-radius: 15px;
+        width: 70px;
+        height: 70px;
+        margin-right: 10px;
+      }
+      .fancyslider::part(input) {
+        border: 1px solid royalblue;
+        border-radius: 10px;
+        --sl-input-border-radius-medium: 10px;
+      }
+      .fancyslider::part(format-button) {
+        border: 1px solid royalblue;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+      }
+      .fancyslider::part(eye-dropper-button) {
+        border: 1px solid royalblue;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+      .fancyslider::part(format-button__base) {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+      }
+      .fancyslider::part(eye-dropper-button__base) {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+      .fancyslider::part(swatch) {
+        margin: 0px;
+      }
+
+      .bigswitches::part(label) {
+        padding-left: 15px;
+      }
+      .bigswitches::part(thumb) {
+        filter: drop-shadow(0px 0px 2px black);
+        border-width: 5px;
+      }
+      .bigswitches::part(control) {
+        border-radius: 15px;
+      }
+
+      .StrongButton::part(label) {
+        font-weight: 700;
+        font-style: oblique;
+      }
+
+      .color-label {
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #cbd5e1;
+        min-width: 180px;
+        min-height: 48px;
+        background: #ffffff;
+        color: #111827;
+        font-weight: 700;
+      }
+
+      .image-comparer-wrapper {
+        border-radius: 20px;
+        border: 2px solid gray;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <h1>TMS Web Core Shoelace Demo (Python Port)</h1>
+        <p>
+          A FastAPI-served recreation of the original Delphi/TMS Web Core sample. It
+          mirrors the button click, switch toggle, and color picker behavior using
+          Shoelace components.
+        </p>
+      </header>
+
+      <section class="panel">
+        <div class="controls-grid">
+          <div class="control-label">Button</div>
+          <sl-button id="mybutton" class="StrongButton" size="large" variant="success">
+            Success!
+          </sl-button>
+
+          <div class="control-label">Switch</div>
+          <sl-switch
+            id="myswitch"
+            class="bigswitches"
+            style="--width: 100px; --height: 50px; --thumb-size: 75px"
+          >
+            Now THAT is a Switch!
+          </sl-switch>
+
+          <div class="control-label">Color Picker</div>
+          <div class="color-label" id="color-label">Color Picker</div>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <sl-color-picker
+            id="mycolorpicker"
+            class="fancyslider"
+            style="
+              --grid-height: 200px;
+              --grid-width: 400px;
+              --slider-height: 30px;
+              --slider-handle-size: 40px;
+              --swatch-size: 40px;
+            "
+            inline
+            opacity
+            uppercase
+            format="rgb"
+            value="maroon"
+          ></sl-color-picker>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Image Comparer</h2>
+        <div class="image-comparer-wrapper">
+          <sl-image-comparer class="ic" position="50">
+            <img
+              slot="after"
+              src="https://cimg1.ibsrv.net/ibimg/hgm/1600x900-1/100/380/mclaren-mp4-27-2012-formula-1-race-car_100380113.jpg"
+              style="border-top-left-radius: 18px; border-bottom-left-radius: 18px;"
+            />
+            <img
+              slot="before"
+              src="https://media-cdn.mclaren.com/media/images/galleries/2022_MCL_LAUNCH-MCL36-SAFE_LN_VELO_Side_v1_WEBSITE_RELEASE_600x620.jpg"
+              style="border-top-right-radius: 18px; border-bottom-right-radius: 18px;"
+            />
+          </sl-image-comparer>
+        </div>
+      </section>
+    </div>
+
+    <script type="module">
+      const button = document.querySelector("#mybutton");
+      const toggle = document.querySelector("#myswitch");
+      const colorPicker = document.querySelector("#mycolorpicker");
+      const colorLabel = document.querySelector("#color-label");
+
+      // Button behavior mirrors the Delphi ShowMessage output
+      button.addEventListener("click", (event) => {
+        const eventId = event.target?.id ?? "undefined";
+        alert(`Button was clicked: ${eventId}`);
+      });
+
+      // Switch behavior mirrors the Delphi ShowMessage output
+      toggle.addEventListener("sl-change", (event) => {
+        const isOn = event.target.checked;
+        alert(isOn ? "Switch is ON" : "Switch is OFF");
+      });
+
+      // Color picker label update mirrors Delphi logic
+      colorPicker.addEventListener("sl-change", (event) => {
+        const hexa = event.target.getFormattedValue("hexa");
+        colorLabel.textContent = hexa;
+        colorLabel.style.backgroundColor = hexa;
+        colorLabel.style.color = "#0f172a";
+      });
+
+      // Swatch definitions and tooltips recreated from the Delphi asm block
+      const swatchNames = {
+        "#202020": "Gray 32",
+        "#404040": "Gray 64",
+        "#606060": "Gray 96",
+        "#808080": "Gray 128 (Gray)",
+        "#A0A0A0": "Gray 160",
+        "#C0C0C0": "Gray 192 (Silver)",
+        "#E0E0E0": "Gray 224",
+        "#FFFFFF": "White",
+
+        "#200000": "#200000",
+        "#400000": "#400000",
+        "#600000": "#600000",
+        "#800000": "Maroon",
+        "#A00000": "#A00000",
+        "#C00000": "#C00000",
+        "#E00000": "#E00000",
+        "#FF0000": "Red",
+
+        "#002000": "#002000",
+        "#004000": "#004000",
+        "#006000": "#006000",
+        "#008000": "Green",
+        "#00A000": "#00A000",
+        "#00C000": "#00C000",
+        "#00E000": "#00E000",
+        "#00FF00": "Lime",
+
+        "#000020": "#000020",
+        "#000040": "#000040",
+        "#000060": "#000060",
+        "#000080": "Navy",
+        "#0000A0": "#0000A0",
+        "#0000C0": "#0000C0",
+        "#0000E0": "#0000E0",
+        "#0000FF": "Blue",
+
+        "#200020": "#200020",
+        "#400040": "#400040",
+        "#600060": "#600060",
+        "#800080": "Purple",
+        "#A000A0": "#A000A0",
+        "#C000C0": "#C000C0",
+        "#E000E0": "#E000E0",
+        "#FF00FF": "Fuchsia",
+
+        "#202000": "#202000",
+        "#404000": "#404000",
+        "#606000": "#606000",
+        "#808000": "Olive",
+        "#A0A000": "#A0A000",
+        "#C0C000": "#C0C000",
+        "#E0E000": "#E0E000",
+        "#FFFF00": "Yellow",
+
+        "#002020": "#002020",
+        "#004040": "#004040",
+        "#006060": "#006060",
+        "#008080": "Teal",
+        "#00A0A0": "#00A0A0",
+        "#00C0C0": "#00C0C0",
+        "#00E0E0": "#00E0E0",
+        "#00FFFF": "Aqua",
+
+        black: "Black",
+        gold: "Gold",
+        pink: "Pink",
+        orange: "Orange",
+        tomato: "Tomato",
+        brown: "Brown",
+        deepskyblue: "Deep Sky Blue",
+        royalblue: "Royal Blue",
+      };
+
+      customElements.whenDefined("sl-color-picker").then(() => {
+        colorPicker.swatches = Object.keys(swatchNames);
+        colorPicker.updateComplete.then(() => {
+          const swatches = colorPicker.shadowRoot.querySelectorAll('[part~="swatch"]');
+          swatches.forEach((swatch) => {
+            const tooltip = document.createElement("sl-tooltip");
+            tooltip.content = swatchNames[swatch.ariaLabel] || swatch.ariaLabel;
+            const parent = swatch.parentNode;
+            parent.replaceChild(tooltip, swatch);
+            tooltip.appendChild(swatch);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
